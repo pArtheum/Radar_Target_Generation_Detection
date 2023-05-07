@@ -58,18 +58,17 @@ td =zeros(1,length(t));
 % Running the radar scenario over the time. 
 for i=1:length(t)         
     %For each time stamp update the Range of the Target for constant velocity. 
-    timestamp = (tgt_Pos + (t(i) * tgt_vel)) / cel;
+    td(i) = (2 * (tgt_Pos + (t(i) * tgt_vel))) / cel;
 
     %For each time sample we need update the t_cell_rangeansmitted and
     %received signal. 
-    Tx(i) = cos(2 * pi * ((main_fc * t(i)) + (slope * t(i)^2) / 2));
-    tmp = (t(i) - timestamp);
-    Rx(i) = cos(2 * pi * ((main_fc * tmp) + (slope * tmp^2) / 2));
+    Tx(i) = cos(2 * pi * (main_fc * t(i) + (slope * t(i)^2) / 2));
+    Rx(i) = cos(2 * pi * (main_fc * (t(i) - td(i)) + (slope * (t(i) - td(i))^2) / 2));
     
     %Now by mixing the t_cell_rangeansmit and Receive generate the beat signal
     %This is done by element wise mat_cell_rangeix multiplication of t_cell_rangeansmit and
     %Receiver Signal
-    Mix(i) = Rx(i) * Tx(i);
+    Mix(i) = Rx(i) .* Tx(i);
 end
 
 %% RANGE MEASUREMENT
